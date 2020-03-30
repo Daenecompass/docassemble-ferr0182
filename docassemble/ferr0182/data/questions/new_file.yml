@@ -1,7 +1,0 @@
----
-mandatory: True
-question: Hello World!
-buttons:
-  - Exit: exit
-  - Restart: restart
----
