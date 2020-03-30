@@ -1,0 +1,174 @@
+---
+objects:
+  - endpoint: DADict
+---
+mandatory: true
+question:  Welcome to the Supreme Court Form Generator Service!
+subquestion: |
+     This service is provided for Solicitors of the Supreme Court of South Australia, to create a Form 1 document type, on behalf of their client. 
+     
+     Please note that if you are not a solicitor, a lawyer is required to review the form before submission.
+     
+     To create a new form, press **Continue.**
+     
+     To exit this service and be redirected to the Courts SA homepage, click **Exit.**
+
+buttons:
+ - Continue: continue
+ - Exit: exit
+   url: http://www.courts.sa.gov.au/Pages/default.aspx 
+---
+mandatory: true
+code: |
+  if LFSnameofcourt != 'Supreme Court':
+    endpoint['Unavailable']
+  else:
+    endpoint['Available']
+---
+question: Name of the Court Required
+subquestion: |
+ Please select the name of the South Australian court you require:
+fields:
+- Name of Court: LFSnameofcourt
+  datatype: radio
+  choices:
+    - Magistrates Court
+    - District Court
+    - Supreme Court
+    - Federal Court
+    - Federal Circuit Court
+---
+event: endpoint['Unavailable']
+question: Oh No!
+subquestion:
+    Our online services are currently under maintenance. Only a **Supreme Court Form 1** document can be created on this app, until further notice. 
+    
+    Sorry for any inconvenience this may have caused! 
+buttons:
+  - Exit: exit
+  - Restart: restart
+---
+event: endpoint['Available']
+question: Supreme Court Form 1 Generator
+subquestion: |
+  This service of the Supreme Court of South Australia is currently available! You will now be taken to a series of questions to complete your form.
+  
+  The questionnaire should take **approximately 5 minutes** to complete.
+buttons:
+  - Continue: continue
+  - Exit: exit
+--- 
+question: Name of the Solicitor
+subquestion: |
+ Please enter your full name. 
+fields:
+  - Title: LFStitle  
+    choices:
+      - Dr
+      - Mr
+      - Mrs
+      - Ms
+      - Miss
+  - First Name: LFSfirstname  
+  - Last Name: LFSlastname 
+---
+question: Address
+subquestion: |
+ Please provide the address details of the firm you are representing. 
+fields: 
+ - Street Address: LFSstreetaddress 
+ - State/Territory: LFSstateaus
+   choices:
+    - SA
+    - TAS
+    - NT
+    - Vic
+    - QLD
+    - WA
+    - ACT
+    - NSW
+ - Postcode: LFSpostcode
+   datatype: integer
+---
+question: Contact Details
+subquestion: |
+ Please provide the following contact details of the firm you are representing. 
+fields:
+ - Telephone Number: LFStelephone  
+   datatype: phone number
+---
+question: Contact Details
+subquestion: |
+ Please provide your following contact details. Personal contact details may be used.
+fields:
+ - Mobile Phone Number: LFSmobile 
+   datatype: phone number
+ - Email address: LFSemail 
+---
+question: Document Type
+subquestion: |
+ Please indicate the type of document you require from the choices below:
+fields:
+- Document Type: LFSdocumenttype 
+  choices:
+    - Summons
+    - Third Party Notice
+    - Notice of Appeal
+---
+question: Position of the Client
+subquestion: |
+ 
+ Please indicate the position of the client you are representing:
+
+field: LFSposition 
+buttons:
+  - Plaintiff
+  - Defendant
+--- 
+question: The plaintiff
+subquestion: |
+ Please indicate the name of the Plaintiff.
+fields:
+ - Name of Plaintiff: LFSplaintiffname 
+---
+question: The Defendant
+subquestion: |
+ Please indicate the name of the Defendant.
+fields:
+- Name of Defendant: LFSdefendantname 
+---
+mandatory: True
+question: End of Interview!
+subquestion: |
+ Thank you for using the Supreme Court Form generator service!
+ 
+ Please review the information you have entered, in the table below.  
+ 
+ Once you can confirm your details are correct, click **continue.**
+ 
+ If you need to make any corrections, click the **restart** button below.
+ 
+ Information Required|Details of the Solicitor
+  -------|-------
+  Title|${ LFStitle }
+  First Name|${ LFSfirstname }
+  Last Name|${ LFSlastname }
+  Address | ${ LFSstreetaddress} ${LFSstateaus} ${ LFSpostcode }
+  Telephone Number | ${ LFStelephone }
+  Mobile Phone Number | ${ LFSmobile }
+  Email | ${{ LFSemail }}
+  Document Type | ${ LFSdocumenttype }
+  Plaintiff Name |  ${ LFSplaintiffname }
+  Defendant Name | ${ LFSdefendantname }
+  Position of Client represented by Solicitor | ${ LFSposition }
+
+buttons:
+  - Continue: continue
+  - Restart: restart
+---
+question: Thank you! 
+subquestion: |
+  Thank you for using the Supreme Court of South Australia Form 1 Generator Service! Please find an attachment of your form below in PDF format. 
+
+mandatory: True
+---  
