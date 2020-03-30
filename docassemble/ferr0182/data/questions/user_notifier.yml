@@ -1,7 +1,3 @@
-# Used to send an email to all users currently registered on the system
-# Developed to let all users that we are moving off llaw3301.achelp.net
-# and to give them the option to request a new account on
-# docassemble.flinders.edu.au
 ---
 objects:
   - the_sender: Individual
