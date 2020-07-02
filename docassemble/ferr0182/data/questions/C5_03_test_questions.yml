@@ -1,0 +1,40 @@
+---
+# Ask each of the questions
+question: What is your age?
+fields:
+  - no label: MJFage
+    datatype: integer
+---
+question: Type of accommodation
+subquestion: |
+  Are you looking for accommodation for your family or just for yourself?
+fields:
+  - I am looking for: MJFfamily_or_single
+    datatype: radio
+    choices:
+      - accommodation for myself: singles
+      - accommodation for myself and my family: families
+---
+question: What is your gender?
+fields:
+  - no label: MJFgender
+    datatype: radio
+    choices:
+      - Male: male
+      - Female: female
+      - Prefer not to specify: other
+---
+question: Location
+subquestion: |
+  In what parts of the city are you looking for accommodation?
+  
+  You may select more than one choice.
+fields:
+  - no label: MJFlocation
+    datatype: checkboxes
+    choices:
+      - North
+      - South
+      - East
+      - West
+---

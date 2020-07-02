@@ -1,0 +1,59 @@
+include:
+  - C5_03_test_data.yml
+  - C5_03_test_questions.yml
+  - C5_03_test_iteration_2.yml
+---
+mandatory: true
+code: |
+  MJFdisplay_welcome_screen
+  
+  # Ask all the questions
+  MJFage
+  MJFgender
+  MJFfamily_or_single
+  MJFlocation
+  
+  # Display the list
+  MJFfinal_screen
+---
+# This code block displays the welcome screen
+code: |
+  MJFdisplay_welcome_screen = True
+  force_ask('MJFwelcome_screen')
+---
+# And here is the screen itself
+event: MJFwelcome_screen
+question: Welcome
+subquestion: |
+  Display welcome text
+  
+  Display disclaimer
+buttons:
+  - Exit: exit
+  - Continue: continue
+---
+event: MJFfinal_screen
+question: Your providers
+subquestion: |
+  Based on your inputs, here is a list of providers that may accept you.
+  
+  ${MJFdisplay_table}
+buttons:
+  - Exit: exit
+  - Restart: restart
+---
+# This is the table we display in the final screen
+table: MJFdisplay_table
+rows: MJFselected_services
+columns:
+  - Agency: |
+      '[{}]({})'.format(row_item['name'], row_item['website'])
+  - Locations: |
+      row_item['location']
+  - Caters for: |
+      row_item['caters_for']
+  - Genders: |
+      row_item['gender']
+  - Age Range: |
+      'From {} to {}'.format(row_item['age_min'], row_item['age_max'])
+---
