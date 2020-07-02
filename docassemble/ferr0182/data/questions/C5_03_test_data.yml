@@ -1,0 +1,68 @@
+variable name: MJFservice_directory
+use objects: True
+data:
+  - name: ABC Services
+    website: https://abcsvc.org.au
+    gender:
+      - male
+      - female
+    age_min: 18
+    age_max: 65
+    location:
+      - North
+      - East
+    caters_for:
+      - singles
+      - families
+  - name: WH Youth
+    website: https://whyouth.org.au
+    gender:
+      - male
+      - female
+    age_min: 12
+    age_max: 17
+    location:
+      - South
+    caters_for:
+      - singles
+  - name: "St Mary's Shelter"
+    website: https://stmarys.org.au
+    gender:
+      - female
+    age_min: 12
+    age_max: 100
+    location:
+      - North
+    caters_for:
+      - singles
+      - families
+  - name: "MHI Men's Health"
+    website: https://mhimh.org.au
+    gender:
+      - male
+    age_min: 18
+    age_max: 100
+    location:
+      - North
+      - East
+    caters_for:
+      - singles
+  - name: DE Family Shelter
+    website: https://defsupport.org.au
+    gender:
+      - male
+      - female
+    age_min: 18
+    age_max: 65
+    location:
+      - North
+      - East
+      - West
+      - South
+    caters_for:
+      - families
+---
+
+
+
+  

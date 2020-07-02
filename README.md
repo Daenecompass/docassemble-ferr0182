@@ -1,6 +1,6 @@
 # docassemble.ferr0182
 
-A docassemble extension.
+A package for me to dump stuff
 
 ## Author
 

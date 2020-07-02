@@ -1,0 +1,160 @@
+include:
+  - C5_03_test_data.yml
+---
+mandatory: true
+code: |
+  MJFdisplay_welcome_screen
+  
+  # Ask all the questions
+  MJFage
+  MJFgender
+  MJFfamily_or_single
+  MJFlocation
+  
+  # Display the list
+  MJFfinal_screen
+---
+# This code block displays the welcome screen
+code: |
+  MJFdisplay_welcome_screen = True
+  force_ask('MJFwelcome_screen')
+---
+# And here is the screen itself
+event: MJFwelcome_screen
+question: Welcome
+subquestion: |
+  Display welcome text
+  
+  Display disclaimer
+buttons:
+  - Exit: exit
+  - Continue: continue
+---
+# Ask each of the questions
+question: What is your age?
+fields:
+  - no label: MJFage
+    datatype: integer
+---
+question: Type of accommodation
+subquestion: |
+  Are you looking for accommodation for your family or just for yourself?
+fields:
+  - I am looking for: MJFfamily_or_single
+    datatype: radio
+    choices:
+      - accommodation for myself: singles
+      - accommodation for myself and my family: families
+---
+question: What is your gender?
+fields:
+  - no label: MJFgender
+    datatype: radio
+    choices:
+      - Male: male
+      - Female: female
+      - Prefer not to specify: other
+---
+question: Location
+subquestion: |
+  In what parts of the city are you looking for accommodation?
+  
+  You may select more than one choice.
+fields:
+  - no label: MJFlocation
+    datatype: checkboxes
+    choices:
+      - North
+      - South
+      - East
+      - West
+---
+event: MJFfinal_screen
+question: Your providers
+subquestion: |
+  Based on your inputs, here is a list of providers that may accept you.
+  
+  ${MJFdisplay_table}
+buttons:
+  - Exit: exit
+  - Restart: restart
+---
+# This is the table we display in the final screen
+table: MJFdisplay_table
+rows: MJFselected_services
+columns:
+  - Agency: |
+      '[{}]({})'.format(row_item['name'], row_item['website'])
+  - Locations: |
+      row_item['location']
+  - Caters for: |
+      row_item['caters_for']
+  - Genders: |
+      row_item['gender']
+  - Age Range: |
+      'From {} to {}'.format(row_item['age_min'], row_item['age_max'])
+---
+# We need to create a new table from our original data.  The new table
+# will contain only entries that are to be displayed.  First we declare the
+# table as a DAList
+objects:
+  - MJFselected_services: DAList.using(there_are_any=True, auto_gather=False)
+---
+# And now we populate it by adding to it only the records that meet the requirements
+# based on the questions we asked.  To do this we need to iterate through the 
+# original table and append to our new table only the records that meet the data
+# we have input
+code: |
+  # This initialises our new table.
+  MJFselected_services.clear()
+  # Now we iterate over our MJFservice_directory
+  for MJFa_service in MJFservice_directory:
+    # We will add MJFa_service to MJFselected_services only if it meets our
+    # requirements.
+    if MJFa_service['append']:
+      MJFselected_services.append(MJFa_service)
+  MJFselected_services.gathered = True
+---
+# Append flag is set if we meet the age, location, gender and family requirements
+code: |
+  if ( MJFservice_directory[i]['age_requirement'] and 
+    MJFservice_directory[i]['location_requirement'] and
+    MJFservice_directory[i]['gender_requirement'] and
+    MJFservice_directory[i]['family_requirement'] ):
+    
+    MJFservice_directory[i]['append'] = True
+  else:
+    MJFservice_directory[i]['append'] = False
+---
+# Set the age requirement
+code: |
+  if MJFservice_directory[i]['age_min'] <= MJFage <= MJFservice_directory[i]['age_max']:
+    MJFservice_directory[i]['age_requirement'] = True
+  else:
+    MJFservice_directory[i]['age_requirement'] = False
+---
+# Location.
+# The user can select many locations.  We will need to check against each location
+# selected.  We initialise 'location_requirement' to False before we start.  If we
+# find a location it will then be set to true.  Otherwise, the False value will
+# remain
+code: |
+  MJFservice_directory[i]['location_requirement'] = False
+  for MJFa_location in MJFlocation:
+    if MJFa_location in MJFservice_directory[i]['location']:
+      MJFservice_directory[i]['location_requirement'] = True
+---
+# Gender
+code: |
+  if MJFgender in MJFservice_directory[i]['gender']:
+    MJFservice_directory[i]['gender_requirement'] = True
+  else:
+    MJFservice_directory[i]['gender_requirement'] = False
+---
+# Family
+code: |
+  if MJFfamily_or_single in MJFservice_directory[i]['caters_for']:
+    MJFservice_directory[i]['family_requirement'] = True
+  else:
+    MJFservice_directory[i]['family_requirement'] = False
+---
