@@ -1,0 +1,116 @@
+# We need to create a new table from our original data.  The new table
+# will contain only entries that are to be displayed.  First we declare the
+# table as a DAList
+objects:
+  - MJFselected_services: DAList.using(there_are_any=True, auto_gather=False)
+---
+# And now we populate it by adding to it only the records that meet the requirements
+# based on the questions we asked.  To do this we need to iterate through the 
+# original table and append to our new table only the records that meet the data
+# we have input.  Doing this in a single code block is actually a significant 
+# undertaking.  A more elegant way would be to use Docassemble's gathering
+# capabilities (see C5_03_test_iteration_2.yml).  
+#
+# However, for this example we'll do it all in a single code block
+code: |
+  # This initialises our new table.
+  MJFselected_services.clear()
+  # Now we iterate over our MJFservice_directory
+  for MJFa_service in MJFservice_directory:
+    # We will add MJFa_service to MJFselected_services only if it meets our
+    # requirements.
+    
+    # We have four requirements, and we need to meet all four of them.  That lends
+    # itself to a big if statement ie: if requirement1 and requirement2 and...
+    # The if statement would be so big, however, that it would be very hard to
+    # read.  So, let's break this down into its components.  We will construct
+    # a separate if statement for each component, and we will use a fifth
+    # if statement to test all the components at the end
+    
+    # Let's start with age.  We need to test that our age lies between the
+    # age_min and age_max for the current record
+    if MJFa_service['age_min'] <= MJFage <= MJFa_service['age_max']:
+      MJFage_ok = True
+    else:
+      MJFage_ok = False
+      
+    # Next is gender.  A service in the directory can cater for more than one
+    # gender.  The 'gender' tag in our data structure is a list.  We can use
+    # Python's 'in' keyword to test that our gender is in that list of genders
+    if MJFgender in MJFa_service['gender']:
+      MJFgender_ok = True
+    else:
+      MJFgender_ok = False
+      
+    # Next is family or single.  We can use a similar test for this ie:
+    if MJFfamily_or_single in MJFa_service['caters_for']:
+      MJFfamily_ok = True
+    else:
+      MJFfamily_ok = False
+      
+    # Finally, location.
+    # Location is more complex because the use can select more than one location.
+    # When this happens we need to check each the user has selected against the
+    # locations for this service.
+    #
+    # We can iterate over the locations the user has selected.  Before we do so,
+    # we set MJFlocation_ok to False.  If there's a location match, then we set
+    # MJFlocation_ok to true.  That way, if we don't find a match, MJFlocation_ok
+    # remains as false
+    MJFlocation_ok = False
+    for MJFa_location in MJFlocation:
+      if MJFa_location in MJFa_service['location']:
+        MJFlocation_ok = True
+    
+    # This last if statement adds this current service to MJFselected_services if
+    # all of the requirements are met
+    if MJFage_ok and MJFgender_ok and MJFfamily_ok and MJFlocation_ok:
+      MJFselected_services.append(MJFa_service)
+      
+  # Finally, we set gathered to true.
+  # See https://docassemble.org/docs/groups.html#manual for more info
+  MJFselected_services.gathered = True
+---
+# Append flag is set if we meet the age, location, gender and family requirements
+code: |
+  if ( MJFservice_directory[i]['age_requirement'] and 
+    MJFservice_directory[i]['location_requirement'] and
+    MJFservice_directory[i]['gender_requirement'] and
+    MJFservice_directory[i]['family_requirement'] ):
+    
+    MJFservice_directory[i]['append'] = True
+  else:
+    MJFservice_directory[i]['append'] = False
+---
+# Set the age requirement
+code: |
+  if MJFservice_directory[i]['age_min'] <= MJFage <= MJFservice_directory[i]['age_max']:
+    MJFservice_directory[i]['age_requirement'] = True
+  else:
+    MJFservice_directory[i]['age_requirement'] = False
+---
+# Location.
+# The user can select many locations.  We will need to check against each location
+# selected.  We initialise 'location_requirement' to False before we start.  If we
+# find a location it will then be set to true.  Otherwise, the False value will
+# remain
+code: |
+  MJFservice_directory[i]['location_requirement'] = False
+  for MJFa_location in MJFlocation:
+    if MJFa_location in MJFservice_directory[i]['location']:
+      MJFservice_directory[i]['location_requirement'] = True
+---
+# Gender
+code: |
+  if MJFgender in MJFservice_directory[i]['gender']:
+    MJFservice_directory[i]['gender_requirement'] = True
+  else:
+    MJFservice_directory[i]['gender_requirement'] = False
+---
+# Family
+code: |
+  if MJFfamily_or_single in MJFservice_directory[i]['caters_for']:
+    MJFservice_directory[i]['family_requirement'] = True
+  else:
+    MJFservice_directory[i]['family_requirement'] = False
+---
